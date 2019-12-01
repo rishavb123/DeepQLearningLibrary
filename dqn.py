@@ -47,7 +47,20 @@ class DQN:
             Z = layer.forward(Z)
         return Z
 
-    def train(self, X, G, actions, N=1000):
+    def train(self, target_network):
+        if len(self.experience) < self.min_experience:
+            return
+        idx = np.random.choice(len(self.experience), size=self.batch_size, replace=False)
+        states = [self.experience[i]['s'] for i in idx]
+        actions = [self.experience[i]['a'] for i in idx]
+        rewards = [self.experience[i]['r'] for i in idx]
+        next_states = [self.experience[i]['s2'] for i in idx]
+        dones = [self.experience[i]['done'] for i in idx]
+        next_Q = np.max(target_network.predict(next_states), axis=1)
+        targets = [r + self.gamma*next_q if not done else r for r, next_q, done in zip(rewards, next_Q, dones)]
+        self.backprop(states, targets, actions)
+
+    def backprop(self, X, G, actions, N=1000):
         Y_hat = self.predict(X)
         selected_action_values = tf.reduce_sum(Y_hat * tf.one_hot(actions, self.K), 1)
         cost = lambda:tf.reduce_sum(tf.square(self.G - selected_action_values))
@@ -55,9 +68,9 @@ class DQN:
             self.optimizer.minimize(cost, self.params)
 
     def add_experience(self, s, a, r, s2, done):
-        if (len(self.experience['s'])) >= self.max_experience:
+        if (len(self.experience)) >= self.max_experience:
             self.experience.pop(0)
-        self.experience.append((s, a, r, s2, done))
+        self.experience.append({'s': s, 'a': a, 'r': r, 's2': s2, 'done': done})
 
     def sample_action(self, x, eps):
         if np.random.random() < eps:
