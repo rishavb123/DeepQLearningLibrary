@@ -21,7 +21,7 @@ class Model(object):
         self.b = tf.Variable(tf.random.normal((len(y),)))
 
     def __call__(self, x):
-        return self.W * x + self.b
+        return tf.nn.relu(self.W * x + self.b)
 
 
 def loss(predicted_y, desired_y):
@@ -34,7 +34,7 @@ def train(model, inputs, outputs):
         current_loss = loss(model(inputs), outputs)
     grads = t.gradient(current_loss, [model.W, model.b])
     optimizer.apply_gradients(zip(grads,[model.W, model.b]))
-    print(current_loss)
+    print("\r", current_loss, end=" ")
 
 
 model = Model(x, y)
