@@ -9,16 +9,16 @@ import matplotlib.pyplot as plt
 from dqn import DQN
 from savgol_filter import savgol_filter
 
-def play_episode(env, model, target_model, eps, gamma, copy_period, n, training=True):
+def play_episode(env, model, target_model, eps, gamma, copy_period, n, max_steps=500, training=True):
     observation = env.reset()
     done = False
     totalreward = 0
     iters = 0
-    while not done and iters < 500:
 
-        if not training:
-            env.render()
-        print("\r\tEpisode:", format(n, '03d'), "Iteration:", format(iters, '04d'), end="")
+    env._max_episode_steps = max_steps + 1
+
+    while not done and iters < max_steps:
+
 
         action = model.sample_action(observation, eps)
         prev_observation = observation
@@ -28,6 +28,11 @@ def play_episode(env, model, target_model, eps, gamma, copy_period, n, training=
         if done:
             reward -= 200
 
+        if not training:
+            env.render()
+        else:
+            print("\r\tEpisode:", format(n, '03d'), "Iteration:", format(iters, '04d'), 'Reward:', "{:7.2f}".format(reward), 'Total Reward:', "{:7.2f}".format(totalreward), 'Observation', observation, 'Action:', action, end="")
+
         if training:
             model.add_experience(prev_observation, action, reward, observation, done)
             model.train(target_model)
@@ -36,37 +41,47 @@ def play_episode(env, model, target_model, eps, gamma, copy_period, n, training=
                 target_model.copy_from(model)
 
         iters += 1
+    env.close()
     print("\r", end="")
     return totalreward
+
+def play_model(env, model, tmodel, gamma, copy_period):
+    ans = 'y'
+    while ans == 'y':
+        ans = input("Would you like to watch the model play a game? (Y/n): ").lower()
+        print("Total Reward:", play_episode(env, model, tmodel, 0, gamma, copy_period, -1, max_steps=5000, training=False))
 
 def main():
     env = gym.make('CartPole-v0')
     gamma = 0.99
-    copy_period = 50
+    copy_period = 10
+    print_period = 5
 
-    D = len(env.observation_space.sample())
+    D = len(env.observation_space.sample()) if not isinstance(env.observation_space.sample(), int) else 1
     K = env.action_space.n
-    sizes = [200, 200]
+    sizes = [50, 50]
     
     model = DQN(D, K, sizes, gamma)
     tmodel = DQN(D, K, sizes, gamma)
+
+    play_model(env, model, tmodel, gamma, copy_period)
 
     if 'monitor' in sys.argv:
         filename = os.path.basename(__file__).split('.')[0]
         monitor_dir = "./" + filename + '_' + str(datetime.now())
         env = wrappers.Monitor(env, monitor_dir)
 
-    N = 500
+    N = 20
     totalrewards = np.empty(N)
 
     for n in range(N):
         eps = 1.0 / np.sqrt(n+1)
         totalreward = play_episode(env, model, tmodel, eps, gamma, copy_period, n)
         totalrewards[n] = totalreward
-        if n % 10 == 0:
-            print("Episode:", n, "Total Reward:", totalreward, "Epsilon:", eps, "Avg Reward (last 10):", totalrewards[max(0, n-10):(n+1)].mean(), "Avg Reward (last 100):", totalrewards[max(0, n-100):(n+1)].mean())
+        if n % print_period == 0:
+            print("Episode:", n, "Total Reward:", totalreward, "Epsilon:", eps, "Avg Reward (last " + str(print_period) + "):", totalrewards[max(0, n-print_period):(n+1)].mean())
 
-    print("Avg Reward for Last 10 Episodes:", str(totalrewards[-10:].mean()) + ";", "Avg Reward for Last 100 Episodes:", totalrewards[-100:].mean())
+    print("Avg Reward (last " + str(print_period) + "):", str(totalrewards[-print_period:].mean()) + ";")
     print("total rewards:", totalrewards.sum())
 
     plt.plot(totalrewards)
@@ -74,8 +89,7 @@ def main():
     plt.title("Rewards")
     plt.show()
 
-    input("Now lets watch it play a game: ")
-    print(play_episode(env, model, tmodel, 0, gamma, copy_period, N, training=False))
+    play_model(env, model, tmodel, gamma, copy_period)
 
 if __name__ == '__main__':
     main()
