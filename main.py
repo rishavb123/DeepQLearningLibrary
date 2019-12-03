@@ -42,7 +42,7 @@ def play_episode(env, model, target_model, eps, gamma, copy_period, n, max_steps
 
         iters += 1
     env.close()
-    print("\r", end="")
+    print("\r" + " "*100, end="")
     return totalreward
 
 def play_model(env, model, tmodel, gamma, copy_period):
