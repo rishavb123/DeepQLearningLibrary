@@ -52,14 +52,26 @@ def play_model(env, model, tmodel, gamma, copy_period):
         print("Total Reward:", play_episode(env, model, tmodel, 0, gamma, copy_period, -1, max_steps=5000, training=False))
 
 def main():
-    env = gym.make('CartPole-v0')
-    gamma = 0.99
-    copy_period = 10
-    print_period = 5
+    # env = gym.make('CartPole-v0')
+    # gamma = 0.99
+    # copy_period = 10
+    # print_period = 5
+    # N = 100
 
-    D = len(env.observation_space.sample()) if not isinstance(env.observation_space.sample(), int) else 1
-    K = env.action_space.n
-    sizes = [50, 50]
+    # D = len(env.observation_space.sample()) if not isinstance(env.observation_space.sample(), int) else 1
+    # K = env.action_space.n
+    # sizes = [50, 50]
+
+    from test_env import TestEnv
+    env = TestEnv()
+    gamma = 0.99
+    copy_period = 5
+    print_period = 5
+    N = 30
+
+    D = 2
+    K = 2
+    sizes = [10, 10]
     
     model = DQN(D, K, sizes, gamma)
     tmodel = DQN(D, K, sizes, gamma)
@@ -71,7 +83,6 @@ def main():
         monitor_dir = "./" + filename + '_' + str(datetime.now())
         env = wrappers.Monitor(env, monitor_dir)
 
-    N = 20
     totalrewards = np.empty(N)
 
     for n in range(N):
