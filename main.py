@@ -14,13 +14,15 @@ if __name__ == '__main__':
         epsilon=1.0,
         alpha=0.0005, 
         input_dims=8, 
-        n_actions=4, 
+        num_of_actions=4, 
         mem_size=1000000, 
         batch_size=64, 
         epsilon_dec=0.999, 
         epsilon_min=0.01,
         model_file=input('Name the file the AI should save its brain? ') + '.h5'
     )
+
+    agent.load_model(input("What file should the AI load in a brain from a file? "))
 
     scores = []
 

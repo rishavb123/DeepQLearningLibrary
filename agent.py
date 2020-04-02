@@ -49,6 +49,7 @@ class Agent:
     def save_model(self):
         self.dqn.get_model().save(self.model_file)
 
-    def load_model(self, model_file=self.model_file):
-        self.model_file = model_file
-        self.dqn.model = tf.keras.models.load_model(self.model_file)
+    def load_model(self, model_file=None):
+        if model_file == None or model_file == "":
+            model_file = self.model_file
+        self.dqn.model = tf.keras.models.load_model(model_file)
