@@ -49,7 +49,7 @@ if __name__ == '__main__':
         if i % 10 == 0 and i > 0:
             agent.save_model()
 
-        plt.plot(scores)
-        plt.plot(savgol_filter(scores, 30, 4))
-        plt.savefig(agent.model_file[:-3] + '-scores.png')
-        plt.show()
+    plt.plot(scores)
+    # plt.plot(savgol_filter(scores, 30, 4))
+    plt.savefig(agent.model_file[:-3] + '-scores.png')
+    plt.show()
