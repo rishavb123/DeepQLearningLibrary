@@ -6,13 +6,13 @@ class DQN:
         first = True
         for dim in hidden_layers:
             if first:
-                layers.push(tf.keras.layers.Dense(dim, inputs_shape=(input_dims), activation=activation))
+                layers.append(tf.keras.layers.Dense(dim, input_shape=(input_dims, ), activation=activation))
             else:
-                layers.push(tf.keras.layers.Dense(dim, activation=activation))
-        layers.push(tf.keras.layers.Dense(num_of_actions))
+                layers.append(tf.keras.layers.Dense(dim, activation=activation))
+        layers.append(tf.keras.layers.Dense(num_of_actions))
         self.model = tf.keras.Sequential(layers)
 
-        self.model.compile(opimizer=tf.keras.optimizers.Adam(learning_rate), loss='mse')
+        self.model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate), loss='mse')
 
     def get_model(self):
         return self.model

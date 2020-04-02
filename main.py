@@ -13,16 +13,18 @@ if __name__ == '__main__':
         gamma=0.99,
         epsilon=1.0,
         alpha=0.0005, 
-        input_dims=8, 
-        num_of_actions=4, 
+        input_dims=len(env.reset()), 
+        num_of_actions=env.action_space.n, 
         mem_size=1000000, 
         batch_size=64, 
-        epsilon_dec=0.999, 
+        epsilon_decay=0.999, 
         epsilon_min=0.01,
         model_file=input('Name the file the AI should save its brain? ') + '.h5'
     )
 
-    agent.load_model(input("What file should the AI load in a brain from a file? "))
+    brain_file = input("What file should the AI load in a brain from a file? ")
+    if brain_file != "" and brain_file.lower() != "none":
+        agent.load_model(brain_file)
 
     scores = []
 
@@ -49,5 +51,5 @@ if __name__ == '__main__':
 
         plt.plot(scores)
         plt.plot(savgol_filter(scores, 30, 4))
-        plt.savefig('Scores.png')
+        plt.savefig(agent.model_file[:-3] + '-scores.png')
         plt.show()
