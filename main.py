@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     brain_file = input("What file should the AI load in a brain from a file? ")
     if brain_file != "" and brain_file.lower() != "none":
-        agent.load_model(brain_file)
+        agent.load_model(brain_file + ".h5")
 
     scores = []
 
@@ -40,6 +40,7 @@ if __name__ == '__main__':
             agent.remember(observation, action, reward, next_observation, done)
             observation = next_observation
             agent.learn()
+            # env.render()
 
         scores.append(score)
 
