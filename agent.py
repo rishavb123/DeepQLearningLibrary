@@ -47,9 +47,9 @@ class Agent:
         self.epsilon = self.epsilon * self.epsilon_decay if self.epsilon > self.epsilon_min else self.epsilon_min
 
     def save_model(self):
-        self.dqn.get_model().save(self.model_file)
+        self.dqn.save_model(self.model_file)
 
     def load_model(self, model_file=None):
         if model_file == None or model_file == "":
             model_file = self.model_file
-        self.dqn.set_model(tf.keras.models.load_model(model_file))
+        self.dqn.load_model(model_file)

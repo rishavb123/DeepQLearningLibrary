@@ -19,3 +19,9 @@ class DQN:
 
     def set_model(self, model):
         self.model = model
+
+    def load_model(self, model_file):
+        self.model.load_weights(model_file)
+
+    def save_model(self, model_file):
+        self.model.save_weights(model_file)

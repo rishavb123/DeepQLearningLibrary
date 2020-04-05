@@ -19,12 +19,12 @@ if __name__ == '__main__':
         batch_size=64, 
         epsilon_decay=0.999, 
         epsilon_min=0.01,
-        model_file=input('Name the file the AI should save its brain? ') + '.h5'
+        model_file="./models/" + input('Name the file the AI should save its brain? ') + '.h5'
     )
 
     brain_file = input("What file should the AI load in a brain from a file? ")
     if brain_file != "" and brain_file.lower() != "none":
-        agent.load_model(brain_file + ".h5")
+        agent.load_model("./models/" + brain_file + ".h5")
 
     scores = []
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             agent.remember(observation, action, reward, next_observation, done)
             observation = next_observation
             agent.learn()
-            env.render()
+            # env.render()
 
         scores.append(score)
 
@@ -50,7 +50,11 @@ if __name__ == '__main__':
         if i % 10 == 0:
             agent.save_model()
 
-    plt.plot(scores)
-    plt.plot(savgol_filter(scores, n_games / 5, 4))
-    plt.savefig(agent.model_file[:-3] + '-scores.png')
+    print("Initial Action", agent.choose_action(env.reset()))
+
+
+    plt.plot(scores, label='Scores Over Iterations')
+    plt.plot(savgol_filter(scores, n_games / 2, 4), label='Savgol Filter Smoothing')
+    plt.legend()
+    plt.savefig("./graphs/" + agent.model_file.split("/")[2][:-3] + '-scores.png')
     plt.show()

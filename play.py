@@ -6,7 +6,7 @@ if __name__ == '__main__':
     env = gym.make('CartPole-v1')
     agent = Agent(
         gamma=0.99,
-        epsilon=1.0,
+        epsilon=0,
         alpha=0.0005, 
         input_dims=len(env.reset()), 
         num_of_actions=env.action_space.n, 
@@ -16,12 +16,13 @@ if __name__ == '__main__':
         epsilon_min=0.01
     )
 
-    agent.load_model(input("What file should the AI load in a brain from a file? ") + '.h5')
+    agent.load_model("./models/" + input("What file should the AI load in a brain from a file? ") + '.h5')
 
-    while input('Would you like to watch the AI play another game (Y/N): ').lower() == 'y':
+    while input('Would you like to watch the AI play another game (Y/N): ')[0].lower() == 'y':
         done = False
         score = 0
         observation = env.reset()
+        print("Initial Action", [agent.choose_action(observation) for _ in range(5)])
 
         while not done:
             action = agent.choose_action(observation)
