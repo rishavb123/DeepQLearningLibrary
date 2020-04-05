@@ -7,13 +7,13 @@ from agent import Agent
 from savgol_filter import savgol_filter
 
 if __name__ == '__main__':
-    env = gym.make('CartPole-v1')
+    env = gym.make('LunarLander-v2')
     n_games = int(input('How many games should the AI train on? '))
     agent = Agent(
         gamma=0.99,
-        epsilon=0.2,
+        epsilon=1,
         alpha=0.0005, 
-        input_dims=(len(env.reset()), ),
+        input_dims=len(env.reset()),
         num_of_actions=env.action_space.n, 
         mem_size=1000000, 
         batch_size=64, 
@@ -40,7 +40,8 @@ if __name__ == '__main__':
             agent.remember(observation, action, reward, next_observation, done)
             observation = next_observation
             agent.learn()
-            # env.render()
+            # if i % 20 == 1:
+            #     env.render()
 
         scores.append(score)
 
