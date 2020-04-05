@@ -22,7 +22,6 @@ if __name__ == '__main__':
         done = False
         score = 0
         observation = env.reset()
-        print("Initial Action", [agent.choose_action(observation) for _ in range(5)])
 
         while not done:
             action = agent.choose_action(observation)

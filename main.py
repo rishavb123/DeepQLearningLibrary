@@ -50,9 +50,6 @@ if __name__ == '__main__':
         if i % 10 == 0:
             agent.save_model()
 
-    print("Initial Action", agent.choose_action(env.reset()))
-
-
     plt.plot(scores, label='Scores Over Iterations')
     plt.plot(savgol_filter(scores, n_games / 2, 4), label='Savgol Filter Smoothing')
     plt.legend()
