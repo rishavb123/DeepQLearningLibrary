@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     scores = []
 
-    for i in range(n_games):
+    for i in range(1, n_games + 1):
         done = False
         score = 0
         observation = env.reset()
@@ -40,17 +40,17 @@ if __name__ == '__main__':
             agent.remember(observation, action, reward, next_observation, done)
             observation = next_observation
             agent.learn()
-            # env.render()
+            env.render()
 
         scores.append(score)
 
         avg_score = np.mean(scores[max(0, i - 100): i + 1])
         print('Episode ', i, 'Score %.2f' % score, 'Average Score %.2f' % avg_score)
 
-        if i % 10 == 0 and i > 0:
+        if i % 10 == 0:
             agent.save_model()
 
     plt.plot(scores)
-    # plt.plot(savgol_filter(scores, 30, 4))
+    plt.plot(savgol_filter(scores, n_games / 5, 4))
     plt.savefig(agent.model_file[:-3] + '-scores.png')
     plt.show()

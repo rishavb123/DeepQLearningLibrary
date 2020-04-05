@@ -52,4 +52,4 @@ class Agent:
     def load_model(self, model_file=None):
         if model_file == None or model_file == "":
             model_file = self.model_file
-        self.dqn.model = tf.keras.models.load_model(model_file)
+        self.dqn.set_model(tf.keras.models.load_model(model_file))
