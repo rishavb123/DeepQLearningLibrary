@@ -8,7 +8,7 @@ if __name__ == '__main__':
         gamma=0.99,
         epsilon=0,
         alpha=0.0005, 
-        input_dims=len(env.reset()), 
+        input_shape=(len(env.reset()), ), 
         num_of_actions=env.action_space.n, 
         mem_size=1000000, 
         batch_size=64, 

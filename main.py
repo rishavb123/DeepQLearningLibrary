@@ -11,9 +11,9 @@ if __name__ == '__main__':
     n_games = int(input('How many games should the AI train on? '))
     agent = Agent(
         gamma=0.99,
-        epsilon=1.0,
+        epsilon=0.2,
         alpha=0.0005, 
-        input_dims=len(env.reset()), 
+        input_dims=(len(env.reset()), ),
         num_of_actions=env.action_space.n, 
         mem_size=1000000, 
         batch_size=64, 
@@ -49,6 +49,11 @@ if __name__ == '__main__':
 
         if i % 10 == 0:
             agent.save_model()
+
+        if len(scores) > 10 and scores[-3] == 500 and scores[-2] == 500 and scores[-1] == 500:
+            break
+
+    agent.save_model()
 
     plt.plot(scores, label='Scores Over Iterations')
     plt.plot(savgol_filter(scores, n_games / 2, 4), label='Savgol Filter Smoothing')

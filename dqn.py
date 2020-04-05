@@ -1,9 +1,9 @@
 import tensorflow as tf
 
 class DQN:
-    def __init__(self, num_of_actions, input_dims, hidden_layers, activation='relu', learning_rate=0.001):
-        layers = []
-        first = True
+    def __init__(self, num_of_actions, input_dims, hidden_layers, activation='relu', learning_rate=0.001, orig_layers=[]):
+        layers = orig_layers
+        first = len(layers) == 0
         for dim in hidden_layers:
             if first:
                 layers.append(tf.keras.layers.Dense(dim, input_shape=(input_dims, ), activation=activation))

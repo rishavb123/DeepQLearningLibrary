@@ -5,7 +5,7 @@ from replay_buffer import ReplayBuffer
 from dqn import DQN
 
 class Agent:
-    def __init__(self, alpha, gamma, num_of_actions, epsilon, batch_size, input_dims, epsilon_decay=0.996, epsilon_min=0.01, mem_size=1000000, model_file='dqn_model.h5'):
+    def __init__(self, alpha, gamma, num_of_actions, epsilon, batch_size, input_dims, layers=[], epsilon_decay=0.996, epsilon_min=0.01, mem_size=1000000, model_file='dqn_model.h5'):
         self.action_space = [i for i in range(num_of_actions)]
         self.gamma = gamma
         self.epsilon = epsilon
@@ -15,7 +15,7 @@ class Agent:
         self.model_file = model_file
 
         self.memory = ReplayBuffer(mem_size, input_dims, num_of_actions, discrete=True)
-        self.dqn = DQN(num_of_actions, input_dims, [256, 256], learning_rate=alpha)
+        self.dqn = DQN(num_of_actions, input_dims, [256, 256], learning_rate=alpha, layers=layers)
 
     def remember(self, state, action, reward, new_state, done):
         self.memory.store_transition(state, action, reward, new_state, done)
