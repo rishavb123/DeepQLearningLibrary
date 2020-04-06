@@ -6,15 +6,17 @@ import matplotlib.pyplot as plt
 from agent import Agent
 from savgol_filter import savgol_filter
 
+from environments.gym.gym_environment import GymEnvironment
+
 if __name__ == '__main__':
-    env = gym.make('LunarLander-v2')
+    env = GymEnvironment(gym.make('LunarLander-v2'))
     n_games = int(input('How many games should the AI train on? '))
     agent = Agent(
         gamma=0.99,
         epsilon=1,
         alpha=0.0005, 
-        input_dims=len(env.reset()),
-        num_of_actions=env.action_space.n, 
+        input_dims=env.len_of_state(),
+        num_of_actions=env.num_of_actions(), 
         mem_size=1000000, 
         batch_size=64, 
         epsilon_decay=0.999, 
