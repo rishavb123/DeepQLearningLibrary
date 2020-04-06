@@ -20,8 +20,7 @@ class FlappyBird(Environment):
         self.score = 0
         self.dbp = dbp
         self.opening_dist = opening_dist
-        self.surface = pygame.display.set_mode((width, height))
-        pygame.display.set_caption('Flappy Bird')
+        self.surface = None
         if a != None:
             Bird.a = a
         if jump_v != None:
@@ -33,11 +32,18 @@ class FlappyBird(Environment):
 
     def render(self):
 
+        if self.surface == None:
+            self.surface = pygame.display.set_mode((width, height))
+            pygame.display.set_caption('Flappy Bird')
+
         self.surface.fill(WHITE)
 
         self.bird.draw(self.surface)
         for pipe in self.pipes:
             pipe.draw(self.surface)
+
+        self.surface.blit(font.render("Score: " + str(self.score), True, BLACK), [10, 10])
+        pygame.display.update()
 
     def step(self, action):
         reward = 0
@@ -53,21 +59,22 @@ class FlappyBird(Environment):
             pipe.update(dt)
             if self.bird.collide(pipe):
                 done = True
+                reward = -10
 
         if self.pipes[0].x < -self.pipes[0].width:
             self.score += 1
-            reward = 1
+            reward = 100
             self.pipes.pop(0)
-            uy = np.random.random() * (height - opening_dist)
-            ly = np.random.random() * 50 - 25 + opening_dist + uy
-            self.pipes.append(Pipe(uy, ly, self.pipes[len(pipes) - 1].x + self.dbp))
-
-        self.surface.blit(font.render("Score: " + str(self.score), True, BLACK), [10, 10])
-        pygame.display.update()
-
+            uy = np.random.random() * (height - self.opening_dist)
+            ly = np.random.random() * 50 - 25 + self.opening_dist + uy
+            self.pipes.append(Pipe(uy, ly, self.pipes[len(self.pipes) - 1].x + self.dbp))
+        
         self.current_time += dt
 
-        return self.get_state(), reward, done, None
+        state = self.get_state()
+        if reward == 0: reward = (1 - abs(state[1])) / 10
+
+        return state, reward, done, None
 
     def random_action(self):
         return 1 if np.random.random() < 0.05 else 0
@@ -86,7 +93,7 @@ class FlappyBird(Environment):
     def get_state(self):
         for i in range(len(self.pipes) - 1):
             if self.pipes[i].x + self.pipes[i].width > self.bird.x:
-                return ((self.pipes[i].x - self.bird.x) / width, (self.pipes[i].uy - self.bird.y) / width, (self.pipes[i].ly - self.bird.y) / width, (self.pipes[i + 1].x - self.bird.x) / width, (self.pipes[i + 1].uy - self.bird.y) / width, (self.pipes[i + 1].ly - self.bird.y) / width, 2 * self.bird.v / height)
+                return np.array([(self.pipes[i].x - self.bird.x) / width, (self.pipes[i].uy - self.bird.y) / height, (self.pipes[i].ly - self.bird.y) / width, (self.pipes[i + 1].x - self.bird.x) / width, (self.pipes[i + 1].uy - self.bird.y) / width, (self.pipes[i + 1].ly - self.bird.y) / width, 2 * self.bird.v / height])
 
     def num_of_actions(self):
         return 2
@@ -95,4 +102,5 @@ class FlappyBird(Environment):
         return 7
 
     def close(self):
-        pygame.quit()
+        pygame.display.quit()
+        self.surface = None

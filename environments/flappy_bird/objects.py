@@ -16,7 +16,7 @@ class GameObject:
 
 class Bird(GameObject):
 
-    a = 500
+    a = 400
     jump_v = 300
 
     def __init__(self, y=height/2):

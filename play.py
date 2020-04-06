@@ -2,9 +2,11 @@ import gym
 
 from agent import Agent
 from environments.gym import GymEnvironment
+from environments.flappy_bird import FlappyBird
 
 if __name__ == '__main__':
-    env = GymEnvironment(gym.make('CartPole-v1'))
+    # env = GymEnvironment(gym.make('LunarLander-v2'))
+    env = FlappyBird()
     agent = Agent(
         gamma=0.99,
         epsilon=0,

@@ -5,10 +5,12 @@ import matplotlib.pyplot as plt
 
 from agent import Agent
 from savgol_filter import savgol_filter
-from environments.gym import GymEnvironment
+# from environments.gym import GymEnvironment
+from environments.flappy_bird import FlappyBird
 
 if __name__ == '__main__':
-    env = GymEnvironment(gym.make('LunarLander-v2'))
+    # env = GymEnvironment(gym.make('LunarLander-v2'))
+    env = FlappyBird()
     n_games = int(input('How many games should the AI train on? '))
     agent = Agent(
         gamma=0.99,
@@ -20,6 +22,7 @@ if __name__ == '__main__':
         batch_size=64, 
         epsilon_decay=0.999, 
         epsilon_min=0.01,
+        random_action_func=env.random_action,
         model_file="./models/" + input('Name the file the AI should save its brain? ') + '.h5'
     )
 

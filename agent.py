@@ -5,7 +5,7 @@ from replay_buffer import ReplayBuffer
 from dqn import DQN
 
 class Agent:
-    def __init__(self, alpha, gamma, num_of_actions, epsilon, batch_size, input_dims, layers=[], epsilon_decay=0.996, epsilon_min=0.01, mem_size=1000000, model_file='dqn_model.h5'):
+    def __init__(self, alpha, gamma, num_of_actions, epsilon, batch_size, input_dims, random_action_func=None, layers=[], epsilon_decay=0.996, epsilon_min=0.01, mem_size=1000000, model_file='dqn_model.h5'):
         self.action_space = [i for i in range(num_of_actions)]
         self.gamma = gamma
         self.epsilon = epsilon
@@ -13,6 +13,7 @@ class Agent:
         self.epsilon_min = epsilon_min
         self.batch_size = batch_size
         self.model_file = model_file
+        self.random_action_func = random_action_func if random_action_func != None else lambda:np.random.choice(self.action_space)
 
         self.memory = ReplayBuffer(mem_size, input_dims, num_of_actions, discrete=True)
         self.dqn = DQN(num_of_actions, input_dims, [256, 256], learning_rate=alpha, orig_layers=layers)
@@ -22,7 +23,7 @@ class Agent:
 
     def choose_action(self, state):
         state = state[np.newaxis, :]
-        action = np.random.choice(self.action_space) if np.random.random() < self.epsilon else np.argmax(self.dqn.get_model().predict(state))
+        action = self.random_action_func() if np.random.random() < self.epsilon else np.argmax(self.dqn.get_model().predict(state))
         return action
 
     def learn(self):
