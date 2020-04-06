@@ -13,30 +13,29 @@ class Box:
         self.color = color
 
     def collides(self, box):
-        if (self.x < box.x and self.x + self.w > box.x) or (self.x < box.x + box.w and self.x + self.w > box.x + box.w):
-            if (self.y < box.y and self.y + self.h > box.y) or (self.y < box.y + box.h and self.y + self.h > box.y + box.h):
-                return True
-        return False
+        if self.x > box.x + box.w or box.x > self.x + self.w or self.y > box.y + box.h or box.y > self.y + self.h:
+            return False
+        return True
 
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, [int(self.x), int(self.y), int(self.w), int(self.h)])
 
     def update(self):
         if self.x + self.w > width:
-            self.x = 0
-        elif self.x < 0:
             self.x = width - self.w
+        elif self.x < 0:
+            self.x = 0
         if self.y + self.h > height:
-            self.y = 0
-        elif self.y < 0:
             self.y = height - self.h
+        elif self.y < 0:
+            self.y = 0
 
 
 class Enemy(Box):
 
     def __init__(self, corner):
         super().__init__(0 if corner < 2 else width * 0.9, 0 if corner in [0, 2] else height - 0.1 * width, 0.1 * width, 0.1 * width,  RED)
-        self.v = 2
+        self.v = 4
 
     def update(self, player):
 
@@ -47,8 +46,10 @@ class Enemy(Box):
             dx = -1 if np.random.random() < 0.5 else 1
             dy = -1 if np.random.random() < 0.5 else 1
         else:
-            dx = (player.x - self.x) / abs(self.x - player.x)
-            dy = (player.y - self.y) / abs(self.y - player.y)
+            if abs(self.x - player.x) > player.w:
+                dx = (player.x - self.x) / abs(self.x - player.x)
+            if abs(self.y - player.y) > player.h:
+                dy = (player.y - self.y) / abs(self.y - player.y)
 
         dx *= self.v
         dy *= self.v

@@ -46,8 +46,8 @@ if __name__ == '__main__':
             agent.remember(observation, action, reward, next_observation, done)
             observation = next_observation
             agent.learn()
-            if i % 20 == 1:
-                env.render()
+            # if i % 10 == 1:
+            #     env.render()
 
         scores.append(score)
 

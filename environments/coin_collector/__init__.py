@@ -29,7 +29,7 @@ class CoinCollector(Environment):
 
     def step(self, action):
 
-        reward = 0
+        reward = 1
         done = False
 
         self.agent.update(action)
@@ -37,7 +37,7 @@ class CoinCollector(Environment):
 
         if self.agent.collides(self.coin):
             self.coin = Coin()
-            reward = 10
+            reward = 100
         
         if self.agent.collides(self.enemy):
             done = True
