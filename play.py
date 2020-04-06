@@ -1,15 +1,16 @@
 import gym
 
 from agent import Agent
+from environments.gym import GymEnvironment
 
 if __name__ == '__main__':
-    env = gym.make('CartPole-v1')
+    env = GymEnvironment(gym.make('CartPole-v1'))
     agent = Agent(
         gamma=0.99,
         epsilon=0,
         alpha=0.0005, 
-        input_shape=(len(env.reset()), ), 
-        num_of_actions=env.action_space.n, 
+        input_dims=env.len_of_state(),
+        num_of_actions=env.num_of_actions(), 
         mem_size=1000000, 
         batch_size=64, 
         epsilon_decay=0.999, 
@@ -28,5 +29,7 @@ if __name__ == '__main__':
             observation, reward, done, info = env.step(action)
             score += reward
             env.render()
+
+        env.close()
 
         print("Score was", score)

@@ -1,7 +1,7 @@
 import pygame
-from constants import *
-from config import *
-from util import *
+from .constants import *
+from .config import *
+from .util import *
 
 class GameObject:
 
@@ -40,9 +40,6 @@ class Bird(GameObject):
 
     def collide(self, pipe):
         return collide([pipe.x, 0, pipe.width, pipe.uy], [self.x, self.y, self.r]) or collide([pipe.x, pipe.ly, pipe.width, height - pipe.ly], [self.x, self.y, self.r]) or self.y < self.r or self.y > height - self.r 
-
-    def die(self, score):
-        pass
 
 class Pipe(GameObject): 
 
