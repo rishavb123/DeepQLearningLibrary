@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 
 from agent import Agent
 from savgol_filter import savgol_filter
-
-from environments.gym.gym_environment import GymEnvironment
+from environments.gym import GymEnvironment
 
 if __name__ == '__main__':
     env = GymEnvironment(gym.make('LunarLander-v2'))
