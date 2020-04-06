@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 from agent import Agent
 from savgol_filter import savgol_filter
 # from environments.gym import GymEnvironment
-from environments.flappy_bird import FlappyBird
+# from environments.flappy_bird import FlappyBird
+from environments.coin_collector import CoinCollector
 
 if __name__ == '__main__':
     # env = GymEnvironment(gym.make('LunarLander-v2'))
-    env = FlappyBird()
+    # env = FlappyBird()
+    env = CoinCollector()
     n_games = int(input('How many games should the AI train on? '))
     agent = Agent(
         gamma=0.99,
@@ -44,8 +46,8 @@ if __name__ == '__main__':
             agent.remember(observation, action, reward, next_observation, done)
             observation = next_observation
             agent.learn()
-            # if i % 20 == 1:
-            #     env.render()
+            if i % 20 == 1:
+                env.render()
 
         scores.append(score)
 
