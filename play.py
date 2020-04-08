@@ -1,15 +1,15 @@
 import gym
 
 from agent import Agent
-# from environments.gym import GymEnvironment
+from environments.gym import GymEnvironment
 # from environments.flappy_bird import FlappyBird
-from environments.coin_collector import CoinCollector
+# from environments.coin_collector import CoinCollector
 
 if __name__ == '__main__':
     # env = GymEnvironment(gym.make('CartPole-v1'))
-    # env = GymEnvironment(gym.make('LunarLander-v2'))
+    env = GymEnvironment(gym.make('LunarLander-v2'))
     # env = FlappyBird()
-    env = CoinCollector()
+    # env = CoinCollector()
     agent = Agent(
         gamma=0.99,
         epsilon=0,
