@@ -5,7 +5,7 @@ from replay_buffer import ReplayBuffer
 from dqn import DQN
 
 class Agent:
-    def __init__(self, alpha, gamma, num_of_actions, epsilon, batch_size, input_dims, random_action_func=None, layers=[], epsilon_decay=0.996, epsilon_min=0.01, mem_size=1000000, model_file='dqn_model.h5'):
+    def __init__(self, alpha, gamma, num_of_actions, epsilon, batch_size, input_dims, random_action_func=None, layers=[], epsilon_decay=0.996, copy_period=1, epsilon_min=0.01, mem_size=1000000, model_file='dqn_model.h5'):
         self.action_space = [i for i in range(num_of_actions)]
         self.gamma = gamma
         self.epsilon = epsilon
@@ -14,9 +14,12 @@ class Agent:
         self.batch_size = batch_size
         self.model_file = model_file
         self.random_action_func = random_action_func if random_action_func != None else lambda:np.random.choice(self.action_space)
+        self.copy_period = copy_period
 
         self.memory = ReplayBuffer(mem_size, input_dims, num_of_actions, discrete=True)
         self.dqn = DQN(num_of_actions, input_dims, [256, 256], learning_rate=alpha, orig_layers=layers)
+        self.target_dqn = DQN(num_of_actions, input_dims, [256, 256], learning_rate=alpha, orig_layers=layers, model=self.dqn.get_model())
+        self.learn_counter = 0
 
     def remember(self, state, action, reward, new_state, done):
         self.memory.store_transition(state, action, reward, new_state, done)
@@ -27,6 +30,7 @@ class Agent:
         return action
 
     def learn(self):
+        self.learn_counter += 1
         if self.memory.mem_counter < self.batch_size:
             return
         state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
@@ -34,8 +38,8 @@ class Agent:
         action_values = np.array(self.action_space, dtype=np.int8)
         action_indicies = np.dot(action, action_values)
 
-        q_eval = self.dqn.get_model().predict(state)
-        q_next = self.dqn.get_model().predict(new_state)
+        q_eval = self.target_dqn.get_model().predict(state)
+        q_next = self.target_dqn.get_model().predict(new_state)
 
         q_target = q_eval.copy()
 
@@ -46,6 +50,9 @@ class Agent:
         self.dqn.get_model().fit(state, q_target, verbose=0)
 
         self.epsilon = self.epsilon * self.epsilon_decay if self.epsilon > self.epsilon_min else self.epsilon_min
+
+        if self.learn_counter % self.copy_period == 0:
+            self.target_dqn.copy_from(self.dqn)
 
     def save_model(self):
         self.dqn.save_model(self.model_file)
