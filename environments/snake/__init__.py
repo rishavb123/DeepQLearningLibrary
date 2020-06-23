@@ -13,7 +13,7 @@ font = pygame.font.SysFont(None, 20)
 
 class SnakeGame(Environment):
 
-    sight_range = 3
+    sight_range = 2
 
     def __init__(self):
         super().__init__()
@@ -76,10 +76,13 @@ class SnakeGame(Environment):
         for x in range(-sight_range, sight_range + 1):
             for y in range(-sight_range, sight_range + 1):
                 s = -int((self.snake.head.x + x, self.snake.head.y + y) in block_positions)
-                if s == 0 and self.snake.head.x + x == self.apple.x and self.snake.head.y + y == self.apple.y:
-                    s = 1
+                if s == 0:
+                    if self.snake.head.x + x == self.apple.x and self.snake.head.y + y == self.apple.y:
+                        s = 1
+                    elif self.snake.head.x + x < 0 or self.snake.head.y + y < 0 or self.snake.head.x + x >= width / Block.w or self.snake.head.y + y >= height / Block.h:
+                        s = -1
                 state.append(s)
-        return state
+        return np.array(state)
 
     def num_of_actions(self):
         return 4
